@@ -108,7 +108,7 @@ const deleteProduct = async (req, res) => {
 
         const updatedProduct = await Product.findByIdAndUpdate(
             productId,
-            { deleted: true, deletedAt: new Date() },
+            { isDeleted: true, deletedAt: new Date() },
             { new: true }
         );
 
