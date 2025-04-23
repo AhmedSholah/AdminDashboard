@@ -133,7 +133,7 @@ const deleteMultipleProducts = async (req, res) => {
 
         const updatedProducts = await Product.updateMany(
             { _id: { $in: productIds } },
-            { deleted: true, deletedAt: new Date() }
+            { isDeleted: true, deletedAt: new Date() }
         );
 
         if (updatedProducts.nModified === 0) {
