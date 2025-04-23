@@ -19,4 +19,8 @@ router.post('/logout', authMiddleware(), logoutUser);
 router.delete('/users/:id', authMiddleware('superadmin'), deleteUser); 
 router.get('/users', authMiddleware(), getAllUsers); 
 
+
 module.exports = router;
+
+module.exports = router;
+
