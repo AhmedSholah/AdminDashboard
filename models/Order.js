@@ -2,23 +2,36 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
     orderId: { 
-        type: String,
+        type: Number,
         required: true,
         unique: true,
     },
     status: {
         type: String,
         enum: ['pending', 'processing', 'canceled', 'delivered', 'shipped'], 
-        default: 'pending', 
+        default: 'pending',
+        required: true, 
     },
     orderDate: {
         type: Date,
         required: true, 
     },
-    createdAt: {
-        type: Date,
-        default: Date.now, 
+   
+    customerName: {   
+        type: String,
+        required: false,
     },
+    totalPrice: {  
+        type: Number,
+        required: false,
+    },
+
+    customer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Customer',
+        required: true,
+      }
+
 }, { timestamps: true }); 
 
 const Order = mongoose.model('Order', orderSchema);
