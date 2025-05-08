@@ -279,6 +279,54 @@ const searchByProductName = async (req, res) => {
     }
 };
 
+const getTodayStats = async (req, res) => {
+    try {
+        const now = new Date();
+
+      
+        const startOfToday = new Date(now);
+        startOfToday.setHours(0, 0, 0, 0);
+        const endOfToday = new Date(now);
+        endOfToday.setHours(23, 59, 59, 999);
+
+        const startOfYesterday = new Date(startOfToday);
+        startOfYesterday.setDate(startOfToday.getDate() - 1);
+        const endOfYesterday = new Date(endOfToday);
+        endOfYesterday.setDate(endOfToday.getDate() - 1);
+
+  
+        const todayCount = await Product.countDocuments({
+            createdAt: { $gte: startOfToday, $lte: endOfToday },
+            isDeleted: { $ne: true }
+        });
+
+       
+        const yesterdayCount = await Product.countDocuments({
+            createdAt: { $gte: startOfYesterday, $lte: endOfYesterday },
+            isDeleted: { $ne: true }
+        });
+
+        let percentageChange = 0;
+        if (yesterdayCount === 0 && todayCount > 0) {
+            percentageChange = 100;
+        } else if (yesterdayCount === 0 && todayCount === 0) {
+            percentageChange = 0;
+        } else {
+            percentageChange = ((todayCount - yesterdayCount) / yesterdayCount) * 100;
+        }
+
+        res.status(200).json({
+            date: startOfToday.toDateString(),
+            totalCreatedToday: todayCount,
+            totalCreatedYesterday: yesterdayCount,
+            percentageChange: `${percentageChange.toFixed(2)}%`
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+
 module.exports = {
     createProduct,
     updateProduct,
@@ -288,5 +336,6 @@ module.exports = {
     getAllProducts,
     getPaginatedProducts,
     filterProducts,
-    searchByProductName
+    searchByProductName,
+    getTodayStats
 };
