@@ -13,7 +13,8 @@ const {
   getAllProducts,
   getPaginatedProducts,
   filterProducts,
-  searchByProductName
+  searchByProductName,
+  getTodayStats
 } = require("../controllers/productController");
 
 router.post("/", upload.array("images", 4), createProduct);
@@ -27,7 +28,7 @@ router.patch(
 
 router.delete("/many", authMiddleware(), deleteMultipleProducts);
 router.get('/filter', authMiddleware(), filterProducts);
-router.get('/search', authMiddleware(), filterProducts);
+router.get('/search', authMiddleware(), searchByProductName);
 
 router.get("/paginated", authMiddleware(), getPaginatedProducts);
 router.delete("/:productId", authMiddleware(), deleteProduct);
@@ -35,5 +36,6 @@ router.delete("/:productId", authMiddleware(), deleteProduct);
 router.get("/:productId", authMiddleware(), getProduct);
 
 router.get("/", authMiddleware(), getAllProducts);
+router.get('/stats/today', getTodayStats);
 
 module.exports = router;
