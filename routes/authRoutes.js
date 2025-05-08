@@ -4,7 +4,7 @@ const { registerUser,
     getMe,
     logoutUser,
     deleteUser,
-    getAllUsers } = require('../controllers/authController');
+    getAllUsers,addUserByAdmin,editUser,getAllUsersPagination} = require('../controllers/authController');
 
 
 const authMiddleware = require('../middleware/authMiddlewar');
@@ -17,10 +17,16 @@ router.post('/login', loginUser);
 router.get('/me', authMiddleware(), getMe); 
 router.post('/logout', authMiddleware(), logoutUser); 
 router.delete('/users/:id', authMiddleware('superadmin'), deleteUser); 
+
+router.get('/users', authMiddleware(), getAllUsersPagination); 
 router.get('/users', authMiddleware(), getAllUsers); 
+router.post('/add-user', authMiddleware('superadmin'), addUserByAdmin);
+
+router.patch('/users/:id', authMiddleware('superadmin'), editUser);
+
 
 
 module.exports = router;
 
-module.exports = router;
+
 
