@@ -14,6 +14,8 @@ const getAllOrders = async (req, res) => {
     priceMax,
     totalPrice,
     orderId,
+    shippingAddress, 
+    paymentInfo ,
     limit = 11,
     
   } = req.query;
@@ -54,7 +56,7 @@ const getAllOrders = async (req, res) => {
     }
   }
  
-  if (totalPrice) {
+   else if (totalPrice) {
     const parsedTotalPrice = parseFloat(totalPrice);
     if (!isNaN(parsedTotalPrice)) {
       filter.totalPrice = parsedTotalPrice; 
@@ -110,7 +112,7 @@ const addOrder = async (req, res) => {
     const { orderId, orderDate, status,  customer } = req.body;
 
 
-    if (!orderId || !orderDate || !status  || !customer) {
+    if (!orderId || !orderDate || !status  || !customer || !shippingAddress || !paymentInfo) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -130,6 +132,8 @@ const addOrder = async (req, res) => {
       orderDate,
       status,
       customer,  
+      shippingAddress, 
+      paymentInfo,   
     });
 
     
