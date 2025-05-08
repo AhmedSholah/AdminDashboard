@@ -31,11 +31,6 @@ const orderSchema = new mongoose.Schema({
         ref: 'Customer',
         required: true,
       },
-
-
-
-
-
       shippingAddress: {
          street: { type: String, required: true },
          city: { type: String, required: true },
@@ -44,7 +39,7 @@ const orderSchema = new mongoose.Schema({
     paymentInfo: {
          paymentMethod: { type: String, required: true },
          transactionId: { type: Number, required: true },
-         postalCode: { type: Number, required: true },   
+         billingPostalCode: { type: Number, required: true },   
         paymentStatus: { 
             type: String, 
             enum: ['paid', 'unpaid', 'pending'], 
