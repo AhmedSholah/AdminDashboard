@@ -26,13 +26,23 @@ const userSchema = new mongoose.Schema({
         enum: ['admin', 'superadmin'],
         default: 'admin',
     },
-
     avatar: {
         type: String,
         default: "https://i.ibb.co/TVstPXp/default-Image.jpg"
     },
+    active: {
+        type: Boolean,
+        default: true,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
+    deletedAt: {
+        type: Date,
+        default: null,
+    }
 }, { timestamps: true });
-
 
 userSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
@@ -46,8 +56,8 @@ userSchema.pre('save', async function (next) {
 
 const User = mongoose.model('User', userSchema);
 
-const validateUser = (user) => {
-    const schema = Joi.object({
+const validateUser = (user, isAdminAdding = false) => {
+    let schema = Joi.object({
         username: Joi.string()
             .min(3).max(30)
             .required().messages({
@@ -83,14 +93,6 @@ const validateUser = (user) => {
                 'any.required': 'Password is required',
             }),
 
-        confirmPassword: Joi.any()
-            .valid(Joi.ref('password'))
-            .required()
-            .messages({
-                'any.only': 'Confirm password does not match password',
-                'any.required': 'Confirm password is required',
-            }),
-
         role: Joi.string()
             .valid('admin', 'superadmin')
             .default('admin')
@@ -99,6 +101,18 @@ const validateUser = (user) => {
                 'any.only': 'Role must be either admin or superadmin',
             }),
     });
+
+    if (!isAdminAdding) {
+        schema = schema.append({
+            confirmPassword: Joi.any()
+                .valid(Joi.ref('password'))
+                .required()
+                .messages({
+                    'any.only': 'Confirm password does not match password',
+                    'any.required': 'Confirm password is required',
+                })
+        });
+    }
 
     return schema.validate(user, { abortEarly: false });
 };
