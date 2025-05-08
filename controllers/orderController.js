@@ -109,7 +109,7 @@ const getAllOrders = async (req, res) => {
 const addOrder = async (req, res) => {
   try {
   
-    const { orderId, orderDate, status,  customer } = req.body;
+    const { orderId, orderDate, status,  customer , shippingAddress, paymentInfo } = req.body;
 
 
     if (!orderId || !orderDate || !status  || !customer || !shippingAddress || !paymentInfo) {
