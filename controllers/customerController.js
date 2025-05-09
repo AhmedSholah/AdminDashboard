@@ -43,6 +43,7 @@ const getAllCustomers = async (req, res) => {
       filter.$or = [
         { customerName: regex },
         { customerEmail: regex },
+         { customerNumber: regex },
         { tags: { $in: [regex] } },
       ];
     } else {
@@ -89,6 +90,7 @@ const addCustomer = async (req, res) => {
       customerImage,
       customerName,
       customerEmail,
+      customerNumber,
       numberOfOrders,
       total,
       tags,
@@ -100,6 +102,7 @@ const addCustomer = async (req, res) => {
       customerName,
       customerEmail,
       numberOfOrders,
+      customerNumber,
       total,
       tags,
     });
@@ -122,6 +125,7 @@ const updateCustomer = async (req, res) => {
     "customerName",
     "customerEmail",
     "numberOfOrders",
+    "customerNumber",
     "total",
     "tags",
   ];
