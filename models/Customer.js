@@ -19,6 +19,7 @@ const customerSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  
   numberOfOrders: {
     type: Number,
     default: 0,
@@ -31,7 +32,21 @@ const customerSchema = new mongoose.Schema({
     type: [String], 
     enum: ['premium', 'new customer', 'inactive', 'frequent buyer'],
     default: [],
+  } ,
+  customerNumber: {
+  type: String,
+  required: true,
+  unique: true,
+  validate: {
+    validator: function (v) {
+      return /^01[0-2,5]{1}[0-9]{8}$/.test(v);  
+    },
+    message: props => `${props.value} is not a valid Egyptian mobile number!`
   }
+},
+
+
+
 }, { timestamps: true });
 
 const Customer = mongoose.model('Customer', customerSchema);
