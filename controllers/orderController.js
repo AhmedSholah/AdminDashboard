@@ -210,19 +210,44 @@ const deleteOrder = async (req, res) => {
 // @access  Public
 const getOrdersByDateRange = async (req, res) => {
   const { startDate, endDate } = req.query;
-  let filter = {};
-  if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    if (isNaN(start) || isNaN(end)) {
-      return res.status(400).json({ message: "Invalid date format. Use YYYY-MM-DD" });
-    }
-    filter.orderDate = { $gte: start, $lte: end };
+
+  if (!startDate || !endDate) {
+    return res.status(400).json({ message: "Start date and end date are required" });
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (isNaN(start) || isNaN(end)) {
+    return res.status(400).json({ message: "Invalid date format. Use YYYY-MM-DD" });
   }
 
   try {
-    const orders = await Order.find(filter).populate('customer').exec();
+    const orders = await Order.find({
+      orderDate: { $gte: start, $lte: end }
+    }).populate('customer');
+
     res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+
+
+// @desc    Get single order by orderId
+// @route   GET /orders/:id
+// @access  Public
+const getOrderById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const order = await Order.findOne({ orderId: id }).populate("customer");
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(200).json(order);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -234,5 +259,7 @@ module.exports = {
   addOrder,
   updateOrderStatus,
   deleteOrder,
-  getOrdersByDateRange
+  getOrderById,
+  getOrdersByDateRange,
+   
 };
