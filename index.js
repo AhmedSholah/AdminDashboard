@@ -28,6 +28,9 @@ app.use('/api/orders', orderRoutes);
 app.use("/api/customers", customerRoutes);
 app.use('/api/store', storeConfig); 
 
+const dashboardRoutes = require("./routes/dashboard");
+app.use("/dashboard", dashboardRoutes);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
