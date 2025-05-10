@@ -23,8 +23,22 @@ const orderSchema = new mongoose.Schema({
     // },
     totalPrice: {  
         type: Number,
-        required: false,
-    },
+        required: true,
+    }, 
+
+
+    products: [{
+        productId: { 
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product', // نربط بالمنتج في جدول المنتجات
+            required: true
+        },
+        quantity: { // الكمية المطلوبة من المنتج
+            type: Number,
+            required: true,
+            min: [1, 'Quantity must be at least 1'],
+        }
+    }],
 
     customer: {
         type: mongoose.Schema.Types.ObjectId,
