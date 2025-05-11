@@ -4,23 +4,23 @@ const Joi = require('joi');
 const storeSchema = new mongoose.Schema({
   storeName: {
     type: String,
-    required: [true, 'Store name is required'],
+    
     minlength: [2, 'Store name must be at least 2 characters'],
     maxlength: [50, 'Store name can\'t be longer than 50 characters'],
   },
   storeURL: {
     type: String,
-    required: [true, 'Store URL is required'],
+   
     match: [/^https?:\/\/.+/, 'Please enter a valid URL'],
   },
   currency: {
     type: String,
-    required: [true, 'Currency is required'],
+   
     default: 'USD',
   },
   defaultLanguage: {
     type: String,
-    required: [true, 'Default language is required'],
+  
     default: 'English',
   },
   shippingMethods: [
