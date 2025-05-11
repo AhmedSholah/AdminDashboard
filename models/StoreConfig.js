@@ -60,21 +60,21 @@ const Store = mongoose.model('Store', storeSchema);
 
 const validateStore = (store) => {
   const schema = Joi.object({
-    storeName: Joi.string().min(2).max(100).required().messages({
+    storeName: Joi.string().min(2).max(100).messages({
       'string.base': 'Store name must be a string',
       'string.empty': 'Store name is required',
       'string.min': 'Store name must be at least 2 characters',
       'string.max': 'Store name cannot exceed 100 characters',
     }),
-    storeURL: Joi.string().uri().required().messages({
+    storeURL: Joi.string().uri().messages({
       'string.uri': 'Store URL must be a valid URI',
       'any.required': 'Store URL is required',
     }),
-    currency: Joi.string().required().messages({
+    currency: Joi.string().messages({
       'string.base': 'Currency must be a string',
       'string.empty': 'Currency is required',
     }),
-    defaultLanguage: Joi.string().required().messages({
+    defaultLanguage: Joi.string().messages({
       'string.base': 'Language must be a string',
       'string.empty': 'Language is required',
     }),
