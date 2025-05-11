@@ -5,33 +5,32 @@ const Product = require('../models/Product');
 const createProduct = async (req, res) => {
     try {
         const files = req.files;
+        let uploadedImageUrls = [];
 
-        if (!files || files.length === 0) {
-            return res.status(400).json({ message: 'No images uploaded' });
+        if (files && files.length > 0) {
+            if (files.length > 4) {
+                return res.status(400).json({ message: 'Maximum of 4 images allowed' });
+            }
+
+            uploadedImageUrls = await Promise.all(
+                files.map(async (file) => {
+                    const formData = new FormData();
+                    formData.append('image', file.buffer.toString('base64'));
+
+                    const response = await axios.post(
+                        `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`,
+                        formData,
+                        { headers: formData.getHeaders() }
+                    );
+
+                    return response.data.data.url;
+                })
+            );
         }
-
-        if (files.length > 4) {
-            return res.status(400).json({ message: 'Maximum of 4 images allowed' });
-        }
-
-        const uploadedImageUrls = await Promise.all(
-            files.map(async (file) => {
-                const formData = new FormData();
-                formData.append('image', file.buffer.toString('base64'));
-
-                const response = await axios.post(
-                    `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`,
-                    formData,
-                    { headers: formData.getHeaders() }
-                );
-
-                return response.data.data.url;
-            })
-        );
 
         const newProduct = new Product({
             ...req.body,
-            productImages: uploadedImageUrls,
+            productImages: uploadedImageUrls, 
         });
 
         await newProduct.save();
@@ -41,6 +40,7 @@ const createProduct = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
+
 
 const updateProduct = async (req, res) => {
     try {
