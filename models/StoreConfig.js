@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Joi = require('joi');
 
 const storeSchema = new mongoose.Schema({
   storeName: {
@@ -12,11 +11,13 @@ const storeSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Store URL is required'],
     match: [/^https?:\/\/.+/, 'Please enter a valid URL'],
+    maxlength: [200, 'Store URL is too long'], 
   },
   currency: {
     type: String,
     required: [true, 'Currency is required'],
     default: 'USD',
+    enum: ['USD', 'EUR', 'GBP', 'JPY', 'AUD'], 
   },
   defaultLanguage: {
     type: String,
@@ -32,12 +33,18 @@ const storeSchema = new mongoose.Schema({
       cost: {
         type: Number,
         required: [true, 'Shipping cost is required'],
-        min: [200, 'Cost must be at least 0'],
+        min: [0, 'Cost must be at least 0'], 
       },
       estimatedDeliveryMin: {
         type: Number,
         required: [true, 'Minimum estimated delivery is required'],
-        min: [200, 'Minimum estimated delivery must be at least 200 hours'],
+        min: [0, 'Minimum estimated delivery must be at least 0'],
+        validate: {
+          validator: function(value) {
+            return value <= this.estimatedDeliveryMax; 
+          },
+          message: 'Minimum estimated delivery must be less than or equal to maximum.',
+        },
       },
       estimatedDeliveryMax: {
         type: Number,
@@ -58,36 +65,4 @@ const storeSchema = new mongoose.Schema({
 
 const Store = mongoose.model('Store', storeSchema);
 
-const validateStore = (store) => {
-  const schema = Joi.object({
-    storeName: Joi.string().min(2).max(100).required().messages({
-      'string.base': 'Store name must be a string',
-      'string.empty': 'Store name is required',
-      'string.min': 'Store name must be at least 2 characters',
-      'string.max': 'Store name cannot exceed 100 characters',
-    }),
-    storeURL: Joi.string().uri().required().messages({
-      'string.uri': 'Store URL must be a valid URI',
-      'any.required': 'Store URL is required',
-    }),
-    currency: Joi.string().required().messages({
-      'string.base': 'Currency must be a string',
-      'string.empty': 'Currency is required',
-    }),
-    defaultLanguage: Joi.string().required().messages({
-      'string.base': 'Language must be a string',
-      'string.empty': 'Language is required',
-    }),
-    shippingMethods: Joi.array().items(Joi.object({
-      methodName: Joi.string().required(),
-      cost: Joi.number().required().min(0),
-      estimatedDeliveryMin: Joi.number().required().min(0),
-      estimatedDeliveryMax: Joi.number().required().min(0),
-      active: Joi.boolean(),
-    })),
-  });
-
-  return schema.validate(store, { abortEarly: false });
-};
-
-module.exports = { Store, validateStore };
+module.exports = Store;
