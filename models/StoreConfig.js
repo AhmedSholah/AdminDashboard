@@ -4,23 +4,23 @@ const Joi = require('joi');
 const storeSchema = new mongoose.Schema({
   storeName: {
     type: String,
-    
+    required: [true, 'Store name is required'],
     minlength: [2, 'Store name must be at least 2 characters'],
     maxlength: [50, 'Store name can\'t be longer than 50 characters'],
   },
   storeURL: {
     type: String,
-   
+    required: [true, 'Store URL is required'],
     match: [/^https?:\/\/.+/, 'Please enter a valid URL'],
   },
   currency: {
     type: String,
-   
+    required: [true, 'Currency is required'],
     default: 'USD',
   },
   defaultLanguage: {
     type: String,
-  
+    required: [true, 'Default language is required'],
     default: 'English',
   },
   shippingMethods: [
@@ -60,21 +60,21 @@ const Store = mongoose.model('Store', storeSchema);
 
 const validateStore = (store) => {
   const schema = Joi.object({
-    storeName: Joi.string().min(2).max(100).messages({
+    storeName: Joi.string().min(2).max(100).required().messages({
       'string.base': 'Store name must be a string',
       'string.empty': 'Store name is required',
       'string.min': 'Store name must be at least 2 characters',
       'string.max': 'Store name cannot exceed 100 characters',
     }),
-    storeURL: Joi.string().uri().messages({
+    storeURL: Joi.string().uri().required().messages({
       'string.uri': 'Store URL must be a valid URI',
       'any.required': 'Store URL is required',
     }),
-    currency: Joi.string().messages({
+    currency: Joi.string().required().messages({
       'string.base': 'Currency must be a string',
       'string.empty': 'Currency is required',
     }),
-    defaultLanguage: Joi.string().messages({
+    defaultLanguage: Joi.string().required().messages({
       'string.base': 'Language must be a string',
       'string.empty': 'Language is required',
     }),
