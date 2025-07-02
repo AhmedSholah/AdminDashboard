@@ -43,9 +43,9 @@ const orderSchema = new mongoose.Schema(
             },
         ],
 
-        customer: {
+        user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Customer",
+            ref: "User",
             required: true,
         },
         shippingAddress: {
@@ -67,6 +67,6 @@ const orderSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const Order = mongoose.model("VueOrder", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
 
 module.exports = Order;
